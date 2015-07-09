@@ -1,0 +1,54 @@
+********************
+James (8)
+Desired: 22 dancers (no gender constraints)
+Matched: 22 dancers (13 female, 9 male)
+********************
+79 Madeleine Hyde (mhyde@andrew.cmu.edu, 301-325-9224)
+83 Terence An (terencea@andrew.cmu.edu, 4+)
+87 Angelina Sung (angelins@andrew.cmu.edu, 408-338-5946)
+88 karon hawkins (kjhawkin@andrew.cmu.edu, 9179723953)
+95 Eric Wong (ericwong@andrew.cmu.edu, 339-223-7159)
+109 Yiru Yao (yiruy@andrew.cmu.edu, 4128011980)
+124 Jilisa McCullough (jilisam@andrew.cmu.edu, 267-701-6259)
+127 Sabrina Estudillo (sestudil@andrew.cmu.edu, 7735925502)
+128 Feyi Quadri (fmq@andrew.cmu.edu, 3019287195)
+155 Hyeon Ju Song (hyeonjus@andrew.cmu.edu, 732-228-1998)
+163 Paige Thompson (pathomps@andrew.cmu.edu, 845-269-8905)
+171 Lawrence Hu (lyhu@andrew.cmu.edu, 9494399988)
+182 Erin Persson (etp@andrew.cmu.edu, 210-475-2122)
+185 Benjamin Chu (bcchu@andrew.cmu.edu, 4084933045)
+193 Chanamon Ratanalert (chanamon@cmu.edu, 862-371-3892)
+205 Alexis Willis (awillis@andrew.cmu.edu, 6466483536)
+212 Brian Chen (bschen@andrew.cmu.edu, 646-957-2290)
+221 Vivek Nair (viveknai@andrew.cmu.edu, 412-708-9063)
+228 Jialun Xu (jialunx@andrew.cmu.edu, 312-730-2602)
+254 Shuobi Wu (shuobiw@andrew.cmu.edu, 4438729649)
+297 Michelle Ong (mong@andrew.cmu.edu, 4122517959)
+302 Anand Pattabiraman (apattabi@andrew.cmu.edu, 2012146067)
+********************
+Emails to copy:
+kjhawkin@andrew.cmu.edu, terencea@andrew.cmu.edu, jialunx@andrew.cmu.edu, viveknai@andrew.cmu.edu, sestudil@andrew.cmu.edu, fmq@andrew.cmu.edu, apattabi@andrew.cmu.edu, angelins@andrew.cmu.edu, mong@andrew.cmu.edu, bschen@andrew.cmu.edu, hyeonjus@andrew.cmu.edu, etp@andrew.cmu.edu, shuobiw@andrew.cmu.edu, ericwong@andrew.cmu.edu, lyhu@andrew.cmu.edu, pathomps@andrew.cmu.edu, chanamon@cmu.edu, yiruy@andrew.cmu.edu, bcchu@andrew.cmu.edu, mhyde@andrew.cmu.edu, jilisam@andrew.cmu.edu, awillis@andrew.cmu.edu
+********************
+List of names:
+Madeleine Hyde
+Terence An
+Angelina Sung
+karon hawkins
+Eric Wong
+Yiru Yao
+Jilisa McCullough
+Sabrina Estudillo
+Feyi Quadri
+Hyeon Ju Song
+Paige Thompson
+Lawrence Hu
+Erin Persson
+Benjamin Chu
+Chanamon Ratanalert
+Alexis Willis
+Brian Chen
+Vivek Nair
+Jialun Xu
+Shuobi Wu
+Michelle Ong
+Anand Pattabiraman
