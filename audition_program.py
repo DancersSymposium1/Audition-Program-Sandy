@@ -2,6 +2,7 @@
 # Author: Sandy Jiang w/ file reading/writing stuff by Karin Tsai
 
 PRINTOUT_PATH = 'piece_assignments/'
+MAPS_PATH = 'maps/'
 
 CHOREO_PREF_FILE = 'CHOREO_SPRING2015.csv'
 CHOREO_PREF_HEADERS = ['id', 'name', 'total', 'male', 'female']
@@ -227,18 +228,7 @@ def checkOtherDancer(piece_map, dancer_map, alternates, dancer, otherDancer, pie
                 checkOtherPiece(piece_map, dancer_map, alternates, otherDancer, otherPiece, piece)
         return
 
-
-def run():
-    dancer_map = _csv_to_dancers()
-    piece_map = _csv_to_pieces()
-
-    assignDefinites(piece_map, dancer_map)
-    for i in xrange(0,100):
-        alternates = 0
-        if i > 10:
-            alternates = (i//4)+1 #increase # of alternates every four turns
-        assignRest(piece_map, dancer_map, alternates)
-
+def print_txts(dancer_map, piece_map):
     for piece in piece_map.values():
         f = open(PRINTOUT_PATH + '%s - %s.txt' % (piece.id, piece.name.replace('/', '_')), 'w+')
         print >> f, '********************'
@@ -281,6 +271,18 @@ def run():
     print >> f, 'Emails to copy:'
     print >> f, ', '.join([d.email for d in unassigned]) 
     f.close()
+    
+def run():
+    dancer_map = _csv_to_dancers()
+    piece_map = _csv_to_pieces()
+
+    assignDefinites(piece_map, dancer_map)
+    for i in xrange(0,100):
+        alternates = 0
+        if i > 10:
+            alternates = (i//4)+1 #increase # of alternates every four turns
+        assignRest(piece_map, dancer_map, alternates)
+    print_txts(dancer_map, piece_map)
 
     print "Done!"
     
