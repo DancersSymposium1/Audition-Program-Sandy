@@ -277,6 +277,15 @@ def run():
     piece_map = _csv_to_pieces()
 
     assignDefinites(piece_map, dancer_map)
+        
+    #Handpicked matches (due to executive decisions during the manual selection process)
+    """
+    piece_map[3].assign(dancer_map[199])
+    piece_map[17].assign(dancer_map[200])
+    piece_map[16].assign(dancer_map[254])
+    piece_map[19].assign(dancer_map[206])
+    """
+    
     for i in xrange(0,100):
         alternates = 0
         if i > 10:
