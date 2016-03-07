@@ -1,9 +1,6 @@
 # Script to assign dancers to pieces for auditions
 # Author: Sandy Jiang w/ file reading/writing stuff by Karin Tsai
 
-import pickle 
-#for save_maps()
-
 PRINTOUT_PATH = 'piece_assignments/'
 MAPS_PATH = 'maps/'
 
@@ -277,10 +274,6 @@ def print_txts(piece_map, dancer_map):
     print >> f, ', '.join([d.email for d in unassigned]) 
     f.close()
     
-def save_maps(piece_map, dancer_map):
-    pickle.dump(piece_map, open(MAPS_PATH + 'piece_map.p', 'w+'))
-    pickle.dump(dancer_map, open(MAPS_PATH + 'dancer_map.p', 'w+'))
-
 def run():
     dancer_map = _csv_to_dancers()
     piece_map = _csv_to_pieces()
@@ -300,9 +293,7 @@ def run():
         if i > 10:
             alternates = (i//4)+1 #increase # of alternates every four turns
         assignRest(piece_map, dancer_map, alternates)
-
     print_txts(piece_map, dancer_map)
-    save_maps(piece_map, dancer_map)    
 
     print "Done!"
     
