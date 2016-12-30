@@ -4,14 +4,14 @@
 PRINTOUT_PATH = 'piece_assignments/'
 MAPS_PATH = 'maps/'
 
-CHOREO_PREF_FILE = 'CHOREO_SPRING2015.csv'
+CHOREO_PREF_FILE = 'CHOREO_FALL2016.csv'
 CHOREO_PREF_HEADERS = ['id', 'name', 'total', 'male', 'female']
 
-DANCER_PREF_FILE = 'DANCER_SPRING_2015.csv'
+DANCER_PREF_FILE = 'DANCER_FALL2016.csv'
 DANCER_PREF_HEADERS = ['date', 'first', 'last', 'id', 'gender', 'num_pieces']
 DANCER_PREF_ENDING_COLUMNS = ['agreement']
 
-SIGN_IN_FILE = 'SIGN_IN_SPRING2015.csv'
+SIGN_IN_FILE = 'SIGNIN_FALL2016.csv'
 SIGN_IN_HEADERS = ['date', 'id', 'last', 'first', 'class_year', 'email',
                    'college', 'semesters', 'phone']
 
