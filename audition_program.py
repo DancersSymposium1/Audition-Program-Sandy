@@ -1,20 +1,23 @@
-# Script to assign dancers to pieces for auditions
-# Author: Sandy Jiang w/ file reading/writing stuff by Karin Tsai
+# This script was created for use by Dancers' Symposium at Carnegie Mellon University.
+# Script to assign dancers to pieces for auditions. This script assumes that the files used are correct (e.g. DANCER_PREF_FILE has been checked by choreographer_printout.py)
+# To run, change file names for CHOREO_PREF_FILE, DANCER_PREF_FILE, and SIGN_IN_FILE. Remove all files in 'piece_assignments' directory, if they exist.
+# For logs, change verbose to True (this prints everything to the console, sorry)
+# Author: Sandy Jiang with file reading/writing stuff by Karin Tsai
 
-PRINTOUT_PATH = 'piece_assignments/'
-MAPS_PATH = 'maps/'
+printOUT_PATH = 'piece_assignments/'
 
-CHOREO_PREF_FILE = 'CHOREO_FALL2016.csv'
+CHOREO_PREF_FILE = 'CHOREO_FALL17.csv'
 CHOREO_PREF_HEADERS = ['id', 'name', 'total', 'male', 'female']
 
-DANCER_PREF_FILE = 'DANCER_FALL2016.csv'
+DANCER_PREF_FILE = 'DANCER_FALL17.csv'
 DANCER_PREF_HEADERS = ['date', 'first', 'last', 'id', 'gender', 'num_pieces']
 DANCER_PREF_ENDING_COLUMNS = ['agreement']
 
-SIGN_IN_FILE = 'SIGNIN_FALL2016.csv'
+SIGN_IN_FILE = 'SIGN_IN_FALL17.csv'
 SIGN_IN_HEADERS = ['date', 'id', 'last', 'first', 'class_year', 'email',
-                   'college', 'semesters', 'phone']
+                   'semesters', 'phone']
 
+verbose = False
 
 class Dancer(object):
     def __init__(self, _id, first_name, last_name, gender, num_pieces, email,
@@ -30,13 +33,15 @@ class Dancer(object):
         self.piece_ids = []
 
     def __repr__(self):
-        return "%d %s %s (%s, %s)" % (self.id, self.first_name, self.last_name, 
-                                      self.email, self.phone)
+        return "%d %s %s %s %s %s" % (self.id, ";", self.first_name, self.last_name, ";",
+                                      self.email)
 
     def done(self):
-        return self.num_pieces == 0
+        return self.num_pieces <= 0
 
     def match(self, piece, dancer_map, alternates=0):
+        if verbose:
+            print "match" + piece.dancer_rankings.index(self.id)
         return ((not self.done()) and (not piece.full()) and 
                 (piece.genderOk(self, dancer_map)) and
                 (self.id in piece.dancer_rankings[0:piece.capacity+alternates]) and 
@@ -57,13 +62,20 @@ class Piece(object):
         self.dancers = []
 
     def __repr__(self):
-        return "Piece(%r, %r)" % (self.id, self.name)
+        return "%s ; %s" % (self.name, self.id)
 
-    def assign(self, dancer):
+    def assign(self, dancer, dancer_map):
         self.dancers.append(dancer)
         dancer.piece_ids.append(self)
         dancer.piece_rankings.remove(self.id) #remove piece from dancer's ranking list
         dancer.num_pieces -= 1
+        if self.full():
+            for dancer_id in self.dancer_rankings:
+                dancer = dancer_map[dancer_id]
+                if self.id in dancer.piece_rankings:
+                    if verbose:
+                        print self.name + " is full, removing " + dancer.first_name
+                    dancer.piece_rankings.remove(self.id)
 
     def full(self):
         return len(self.dancers) >= self.capacity
@@ -81,7 +93,7 @@ class Piece(object):
         #piece not in dancer rankings should never happen because checked previously
         #dancer will never get into piece: didn't rank or is already done. remove from rankings
         return (dancer not in self.dancers and (self.id not in dancer.piece_rankings or 
-                dancer.done()))
+                dancer.done()) or self.full())
 
 class GenderConstraint(object):
     def __init__(self, _min, _max):
@@ -93,7 +105,7 @@ def _csv_to_dancers():
     create map of dancer_id to dancer objects
 
     NOTE: this does not error check because it assumes error checking already
-          happened while running print_audition_sheets.py
+          happened while running #print_audition_sheets.py
     """
     dancer_signin_file = open(SIGN_IN_FILE, 'rU')
     contact_map = {}
@@ -142,7 +154,7 @@ def _csv_to_pieces():
             continue
 
         columns = line.strip().split(',')
-        _id = int(columns[CHOREO_PREF_HEADERS.index('id')])
+        _id = columns[CHOREO_PREF_HEADERS.index('id')]
         name = columns[CHOREO_PREF_HEADERS.index('name')]
         total = int(columns[CHOREO_PREF_HEADERS.index('total')])
         male = int(columns[CHOREO_PREF_HEADERS.index('male')])
@@ -166,42 +178,71 @@ def assignDefinites(piece_map, dancer_map):
         for dancer_id in piece.dancer_rankings[0:piece.capacity]: #only definites
             dancer = dancer_map[dancer_id]
             if piece.noChance(dancer):
+                if verbose:
+                    print "1 removing dancer: " + dancer.first_name +  " from " + piece.name
                 piece.dancer_rankings.remove(dancer.id)
                 continue
             if dancer.match(piece, dancer_map):
-                piece.assign(dancer)
+                if verbose:
+                    print "1 assigning" + dancer.first_name +  " to " + piece.name
+                piece.assign(dancer, dancer_map)
 
 def assignRest(piece_map, dancer_map, alternates):
     for piece in piece_map.values():
-        if piece.full(): continue
+        if piece.full():
+            if verbose:  
+                print "piece " + piece.name + " is full"
+            continue
         for dancer_id in piece.dancer_rankings[0:piece.capacity+alternates]:  
             dancer = dancer_map[dancer_id]
-            if dancer.id not in piece.dancer_rankings: continue
-            if dancer in piece.dancers: continue #already in the piece
+            if verbose:
+                print "checking dancer: " + dancer.first_name + ", piece: " + piece.name
+            if dancer.id not in piece.dancer_rankings: 
+            	if verbose:
+                    print "dancer not in ranking: " + dancer.first_name +  " from " + piece.name
+            	continue
+            if dancer in piece.dancers:
+            	if verbose:
+                    print "dancer already in: " + dancer.first_name +  " from " + piece.name
+            	continue #already in the piece
             if piece.noChance(dancer):
+                if verbose:
+                    print "removing dancer (no chance): " + dancer.first_name +  " from " + piece.name
                 piece.dancer_rankings.remove(dancer.id)
                 continue
             if dancer.match(piece, dancer_map, alternates):
-                piece.assign(dancer)
+                if verbose:
+                    print "2 assigning" + dancer.first_name +  " to " + piece.name
+                piece.assign(dancer, dancer_map)
                 continue
             else:
+            	if verbose:
+                    print "idk whats happenningggggg with " + dancer.first_name + " and " + piece.name
                 #if the piece is not in dancer's top pieces, go through the pieces before
                 rank = dancer.piece_rankings.index(piece.id) 
                 for otherPiece_id in dancer.piece_rankings[0:rank]:
                     otherPiece = piece_map[otherPiece_id]
                     checkOtherPiece(piece_map, dancer_map, alternates, dancer, otherPiece, piece)
                     if dancer.match(piece, dancer_map, alternates):
-                        piece.assign(dancer)
+                    	if verbose:
+                            print "3 assigning" + dancer.first_name +  " to " + piece.name
+                        piece.assign(dancer, dancer_map)
 
 def checkOtherPiece(piece_map, dancer_map, alternates, dancer, otherPiece, piece):
     if dancer.noChance(otherPiece):
+        if verbose:
+            print "removing dancer: " + dancer.first_name +  " from " + otherPiece.name
         dancer.piece_rankings.remove(otherPiece.id)
         if dancer.match(piece, dancer_map, alternates):
-            piece.assign(dancer)
+            if verbose:
+                print "4 assigning" + dancer.first_name +  " to " + piece.name + " with alternate num: " + str(alternates)
+            piece.assign(dancer, dancer_map)
         return
     elif dancer.id in otherPiece.dancer_rankings:
         if dancer.match(otherPiece, dancer_map):
-            otherPiece.assign(dancer)
+            if verbose:
+                print "5 assigning" + dancer.first_name +  " to " + otherPiece.name
+            otherPiece.assign(dancer, dancer_map)
         else:
             #dancer is ranked (alternate), check dancers before
             rank = otherPiece.dancer_rankings.index(dancer.id)
@@ -213,13 +254,19 @@ def checkOtherPiece(piece_map, dancer_map, alternates, dancer, otherPiece, piece
 
 def checkOtherDancer(piece_map, dancer_map, alternates, dancer, otherDancer, piece):
     if piece.noChance(otherDancer):
+        if verbose:
+            print "4 removing dancer: " + otherDancer.first_name +  " from " + piece.name
         piece.dancer_rankings.remove(otherDancer.id)
         if dancer.match(piece, dancer_map, alternates):
-            piece.assign(dancer)
+            if verbose:
+                print "6 assigning" + dancer.first_name +  " to " + piece.name
+            piece.assign(dancer, dancer_map)
         return
     elif piece in otherDancer.piece_rankings:
         if otherDancer.match(piece, dancer_map):
-            piece.assign(otherDancer)
+            if verbose:
+                print "7 assigning" + otherDancer.first_name +  " to " + piece.name
+            piece.assign(otherDancer, dancer_map)
         else:
             #piece is ranked in other dancer's list, but not in top
             rank = otherDancer.piece_rankings.index(piece.id) 
@@ -228,10 +275,24 @@ def checkOtherDancer(piece_map, dancer_map, alternates, dancer, otherDancer, pie
                 checkOtherPiece(piece_map, dancer_map, alternates, otherDancer, otherPiece, piece)
         return
 
-def print_txts(piece_map, dancer_map):
-    #assigned text files
+
+def run():
+    dancer_map = _csv_to_dancers()
+    piece_map = _csv_to_pieces()
+
+
+    assignDefinites(piece_map, dancer_map)
+    alternates = 0
+    for i in xrange(0,500):
+        #alternates = 0
+        if i > 30 and i %5 == 0:
+            alternates+=1
+            #alternates = (i//4)+1 #increase # of alternates every four turns
+        assignRest(piece_map, dancer_map, alternates)
+
+
     for piece in piece_map.values():
-        f = open(PRINTOUT_PATH + '%s - %s.txt' % (piece.id, piece.name.replace('/', '_')), 'w+')
+        f = open(printOUT_PATH + '%s - %s.txt' % (piece.id, piece.name.replace('/', '_')), 'w+')
         print >> f, '********************'
         print >> f, '%s (%s)' % (piece.name, piece.id)
         if piece.gender_constraints:
@@ -255,11 +316,18 @@ def print_txts(piece_map, dancer_map):
         print >> f, 'List of names:'
         for dancer in sorted_dancers:
             print >> f, "%s" % (dancer.first_name + " " + dancer.last_name)
+        print >> f, '********************'
+        print >> f, 'List of emails:'
+        for dancer in sorted_dancers:
+            print >> f, "%s" % (dancer.email)
+        print >> f, '********************'
+        print >> f, 'List of audition numbers:'
+        for dancer in sorted_dancers:
+            print >> f, "%s" % (dancer.id)
 
         f.close()
 
-    #unassigned text file
-    f = open(PRINTOUT_PATH + 'unassigned.txt', 'w+')
+    f = open(printOUT_PATH + 'unassigned.txt', 'w+')
     unassigned = []
     for dancer in dancer_map.values():
         if not dancer.piece_ids and dancer.num_pieces:
@@ -273,27 +341,14 @@ def print_txts(piece_map, dancer_map):
     print >> f, 'Emails to copy:'
     print >> f, ', '.join([d.email for d in unassigned]) 
     f.close()
-    
-def run():
-    dancer_map = _csv_to_dancers()
-    piece_map = _csv_to_pieces()
 
-    assignDefinites(piece_map, dancer_map)
-        
-    #Handpicked matches (due to executive decisions during the manual selection process)
-    """
-    piece_map[3].assign(dancer_map[199])
-    piece_map[17].assign(dancer_map[200])
-    piece_map[16].assign(dancer_map[254])
-    piece_map[19].assign(dancer_map[206])
-    """
-    
-    for i in xrange(0,100):
-        alternates = 0
-        if i > 10:
-            alternates = (i//4)+1 #increase # of alternates every four turns
-        assignRest(piece_map, dancer_map, alternates)
-    print_txts(piece_map, dancer_map)
+    f = open(printOUT_PATH + "assigned.txt", 'w+')
+    for piece in piece_map.values():
+        print >> f, piece
+        sorted_dancers = sorted(piece.dancers, key=lambda d: d.id)
+        for dancer in sorted_dancers:
+            print >> f, dancer
+        print >> f, "\n"
 
     print "Done!"
     
